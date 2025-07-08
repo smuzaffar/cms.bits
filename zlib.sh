@@ -1,20 +1,26 @@
 package: zlib
 version: "%(tag_basename)s"
-tag: v1.3.1
+tag: v1.2.13
 source: https://github.com/madler/zlib
 build_requires:
-  - "GCC-Toolchain:(?!osx)"
   - alibuild-recipe-tools
-prefer_system: "(?!slc5)"
-prefer_system_check: |
-  printf "#include <zlib.h>\n" | cc -xc - -c -M 2>&1
+requires:
+  - GCC-Toolchain
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded $SOURCEDIR/ ./
+echo "→ rsync -a --chmod=ug=rwX --delete --exclude '**/.git' $SOURCEDIR/ $BUILDDIR/"
+rsync -a --chmod=ug=rwX --delete --exclude '**/.git' \
+       "$SOURCEDIR"/ "$BUILDDIR"/
 
-./configure --prefix="$INSTALLROOT"
+CONF_FLAG="-fPIC -O3 -DUSE_MMAP -DUNALIGNED_OK -D_LARGEFILE64_SOURCE=1"
 
-make ${JOBS+-j $JOBS}
+CFLAGS="$CONF_FLAGS" ./configure --prefix="$INSTALLROOT"
+
+: "${MAKEPROCESSES:=-j$(nproc)}"
+make $MAKEPROCESSES
+
+echo "→ make install"
 make install
+
 # Modulefile
 MODULEDIR="$INSTALLROOT/etc/modulefiles"
 MODULEFILE="$MODULEDIR/$PKGNAME"

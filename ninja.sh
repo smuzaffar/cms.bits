@@ -1,21 +1,16 @@
 package: ninja
-version: "fortran-%(short_hash)s"
-tag: "v1.11.1.g95dee.kitware.jobserver-1"
-source: https://github.com/Kitware/ninja
+version: "%(tag_basename)s"
+tag: v1.11.1
+source: https://github.com/ninja-build/ninja
 build_requires:
-  - "GCC-Toolchain:(?!osx)"
-  - "CMake"
   - alibuild-recipe-tools
-prefer_system: .*
-prefer_system_check: |
-  type ninja
+  - re2c
+  - Python
+requires:
+  - "GCC-Toolchain:(?!osx)"
 ---
-#!/bin/bash
-cmake -Bbuild-cmake "$SOURCEDIR"
-cmake --build build-cmake ${JOBS:+-j$JOBS}
+rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+python3 ./configure.py --bootstrap
 
-mkdir -p "$INSTALLROOT"/bin
-cp build-cmake/ninja "$INSTALLROOT/bin"
-
-mkdir -p "$INSTALLROOT/etc/modulefiles"
-alibuild-generate-module --bin >"$INSTALLROOT/etc/modulefiles/$PKGNAME"
+mkdir -p "$INSTALLROOT/bin"
+cp ninja $INSTALLROOT/bin

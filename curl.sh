@@ -1,29 +1,60 @@
 package: curl
-version: "7.70.0"
-tag: curl-7_70_0
+version: "7.79.0"
+tag: curl-7_79_0
 source: https://github.com/curl/curl.git
 build_requires:
   - "OpenSSL:(?!osx)"
   - alibuild-recipe-tools
+requires:
+  - zlib
 ---
-#!/bin/bash -e
+set -x
+rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
 
-if [[ $ARCHITECTURE = osx* ]]; then
-  OPENSSL_ROOT=$(brew --prefix openssl@3)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    KERBEROS_ROOT=/usr/heimdal
+    OS_TYPE="darwin"
 else
-  ${OPENSSL_ROOT:+env LDFLAGS=-Wl,-R$OPENSSL_ROOT/lib}
+    KERBEROS_ROOT=/usr
+    OS_TYPE="linux"
 fi
-rsync -a --chmod=ug=rwX  --delete --exclude="**/.git" --delete-excluded $SOURCEDIR/ .
-
-sed -i.deleteme 's/CPPFLAGS="$CPPFLAGS $SSL_CPPFLAGS"/CPPFLAGS="$SSL_CPPFLAGS $CPPFLAGS"/' configure.ac
-sed -i.deleteme 's/LDFLAGS="$LDFLAGS $SSL_LDFLAGS"/LDFLAGS="$SSL_LDFLAGS $LDFLAGS"/' configure.ac
 
 ./buildconf
-./configure --prefix=$INSTALLROOT --disable-ldap ${OPENSSL_ROOT:+--with-ssl=$OPENSSL_ROOT} --disable-static
-make ${JOBS:+-j$JOBS}
+
+./configure \
+  --prefix="$INSTALLROOT" \
+  --disable-silent-rules \
+  --disable-static \
+  --without-libidn \
+  --without-zstd \
+  --disable-ldap \
+  --with-zlib="$ZLIB_ROOT" \
+  --without-nss \
+  --without-libssh2 \
+  --with-gssapi="$KERBEROS_ROOT" \
+  --with-openssl
+
+make -j"$MAKEPROCESSES"
+
 make install
+
 
 # Modulefile
 mkdir -p etc/modulefiles
 alibuild-generate-module --bin --lib > etc/modulefiles/$PKGNAME
 mkdir -p $INSTALLROOT/etc/modulefiles && rsync -a --delete etc/modulefiles/ $INSTALLROOT/etc/modulefiles
+
+if [[ "$OS_TYPE" == "darwin" ]]; then
+    echo "Applying macOS-specific post-install steps..."
+
+    # Trick to get our version of curl pick up our version of its associated shared
+    # library (which is different from the one coming from the system!).
+    install_name_tool -id "$INSTALLROOT/lib/libcurl-cms.dylib" \
+                      -change "$INSTALLROOT/lib/libcurl.4.dylib" "$INSTALLROOT/lib/libcurl-cms.dylib" \
+                      "$INSTALLROOT/lib/libcurl.4.dylib"
+
+    install_name_tool -change "$INSTALLROOT/lib/libcurl.4.dylib" "$INSTALLROOT/lib/libcurl-cms.dylib" \
+                      "$INSTALLROOT/bin/curl"
+
+    ln -sf libcurl.4.dylib "$INSTALLROOT/lib/libcurl-cms.dylib"
+fi

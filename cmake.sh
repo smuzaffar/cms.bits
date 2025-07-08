@@ -1,26 +1,17 @@
 package: CMake
 version: "%(tag_basename)s"
-tag: "v3.31.6"
+tag: "v3.28.3"
 source: https://github.com/Kitware/CMake
 requires:
   - "OpenSSL:(?!osx)"
   - "GCC-Toolchain:(?!osx)"
+  - bz2lib
+  - expat
   - zlib
   - curl
 build_requires:
   - make
   - alibuild-recipe-tools
-prefer_system: osx.*
-prefer_system_check: |
-  verge() { [[  "$1" = "$(echo -e "$1\n$2" | sort -V | head -n1)" ]]; }
-  verle() { [[  "$1" = "$(echo -e "$1\n$2" | sort -V -r | head -n1)" ]]; }
-  current_version=$(cmake --version | sed -e 's/.* //' | cut -d. -f1,2,3)
-  echo alibuild_system_replace: cmake"$current_version"
-  type cmake && verge 3.28.1 $current_version && verle 3.99.99 $current_version
-prefer_system_replacement_specs:
-  "cmake.*":
-    env:
-      CMAKE_VERSION: ""
 ---
 #!/bin/bash -e
 SONAME=so
@@ -57,7 +48,6 @@ rsync -a --chmod=ugo=rwX --delete --exclude '**/.git' --delete-excluded $SOURCED
                      ${JOBS:+--parallel=$JOBS}
 make ${JOBS+-j $JOBS}
 make install/strip
-
 
 mkdir -p etc/modulefiles
 alibuild-generate-module --bin --lib > etc/modulefiles/$PKGNAME
