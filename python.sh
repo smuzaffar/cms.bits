@@ -13,8 +13,7 @@ requires:
  - zlib
  - sqlite
  - xz
-env:
- "PYTHONROOT": "$INSTALLROOT"
+ - "GCC-Toolchain:(?!osx)"
 ---
 if [[ ! -d "$SOURCEDIR" ]]; then
     exit 1
@@ -31,10 +30,11 @@ fi
 
 export DB6_ROOT
 export LIBFFI_ROOT
+echo $LIBFFI_ROOT
 LDFLAGS=""
 CPPFLAGS=""
 
-for d in ${EXPAT_ROOT} ${BZ2LIB_ROOT} ${DB6_ROOT} ${GDBM_ROOT} ${LIBFFI_ROOT} ${ZLIB_ROOT} ${SQLITE_ROOT} ${XZ_ROOT}; do
+for d in ${EXPAT_ROOT} ${BZ2LIB_ROOT} ${DB6_ROOT} ${GDBM_ROOT} ${LIBFFI_ROOT} ${ZLIB_ROOT} ${SQLITE_ROOT} ${XZ_ROOT} ; do
     if [[ -n "$d" ]]; then
         if [[ -e "$d/lib" ]]; then
             LDFLAGS="$LDFLAGS -L$d/lib"
@@ -50,7 +50,7 @@ done
 
 mkdir -p "$BUILDDIR/tmp"
 
-if ! ./configure \
+./configure \
   --prefix="${INSTALLROOT}" \
   --enable-shared \
   --enable-ipv6 \
@@ -58,9 +58,7 @@ if ! ./configure \
   --without-ensurepip \
   --with-system-expat \
   LDFLAGS="$LDFLAGS" \
-  CPPFLAGS="$CPPFLAGS"; then
-    exit 1
-fi
+  CPPFLAGS="$CPPFLAGS"
 
-make -j"$(nproc)"
-make install 
+make ${JOBS+-j $JOBS}
+make install

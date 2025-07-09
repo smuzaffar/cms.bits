@@ -3,6 +3,8 @@ version: "%(tag_basename)s"
 tag: v1.10
 build_requires:
  - alibuild-recipe-tools
+requires:
+ - "GCC-Toolchain:(?!osx)"
 source: https://github.com/akritkbehera/gdbm
 ---
 CONFIG_BASE_URL="http://cmsrep.cern.ch/cmssw/download/config"

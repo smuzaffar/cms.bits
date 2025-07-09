@@ -1,29 +1,29 @@
 package: libffi
-version: v3.2.1-alice1
+version: "%(tag_basename)s"
+tag: v3.4.2
 build_requires:
-  - "autotools:(slc6|slc7)"
-  - "GCC-Toolchain:(?!osx)"
-  - alibuild-recipe-tools
-source: https://github.com/alisw/libffi
+ - alibuild-recipe-tools
+requires:
+ - "GCC-Toolchain:(?!osx)"
+source: https://github.com/libffi/libffi
 prepend_path:
   LD_LIBRARY_PATH: "$LIBFFI_ROOT/lib64"
 ---
-#!/bin/bash -ex
-rsync -a "$SOURCEDIR"/ .
-autoreconf -ivf .
+rsync -a --chmod=ug=rwX --delete --exclude '**/.git' \
+      "$SOURCEDIR"/ "$BUILDDIR"/
+autoreconf -fiv
+echo "→ ./configure --prefix=$INSTALLROOT --enable-portable-binary --disable-dependency-tracking --disable-static --disable-docs"
+./configure \
+  --prefix="$INSTALLROOT" \
+  --enable-portable-binary \
+  --disable-dependency-tracking \
+  --disable-static \
+  --disable-docs
+: "${MAKEPROCESSES:=-j$(nproc)}"
+make $MAKEPROCESSES
 
-# Hack to bypass automake 1.17 creating a malformed Makefile on macOS
-# https://github.com/libffi/libffi/issues/853
-mv -f Makefile_3.2.1_autoconf_2.69.in Makefile.in
+make $MAKEPROCESSES install
 
-MAKEINFO=: ./configure --prefix="$INSTALLROOT" --libdir=$INSTALLROOT/lib --disable-docs --disable-multi-os-directory
-make ${JOBS:+-j $JOBS} MAKEINFO=:
-make install MAKEINFO=:
-
-[ -d "$INSTALLROOT/lib64" ] && rsync -av "$INSTALLROOT/lib64/" "$INSTALLROOT/lib/" && rm -rf "$INSTALLROOT/lib64"
-
-# Do not install info documentation
-rm -fr "$INSTALLROOT/share/info"
-
-mkdir -p "$INSTALLROOT/etc/modulefiles"
-alibuild-generate-module --lib > "$INSTALLROOT/etc/modulefiles/$PKGNAME"
+#echo "→ rm -rf $INSTALLROOT/lib && rm -rf $INSTALLROOT/lib64/*.la"
+rm -rf "${INSTALLROOT}/lib"
+rm -rf ${INSTALLROOT}/lib64/*.la

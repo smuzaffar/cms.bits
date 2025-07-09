@@ -3,6 +3,8 @@ version: "%(tag_basename)s"
 tag: bzip2-1.0.6
 build_requires:
  - alibuild-recipe-tools
+requires:
+ - "GCC-Toolchain:(?!osx)"
 source: https://github.com/libarchive/bzip2
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/

@@ -3,6 +3,8 @@ version: "%(tag_basename)s"
 tag: R_2_4_8
 build_requires:
  - alibuild-recipe-tools
+requires:
+ - "GCC-Toolchain:(?!osx)"
 source: https://github.com/libexpat/libexpat
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/

@@ -3,6 +3,8 @@ version: "%(tag_basename)s"
 tag: v5.2.5
 build_requires:
   - alibuild-recipe-tools
+requires:
+ - "GCC-Toolchain:(?!osx)"
 source: https://github.com/tukaani-project/xz
 env:
  "XZ_ROOT": "$INSTALLROOT"
