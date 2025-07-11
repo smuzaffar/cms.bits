@@ -4,13 +4,12 @@ tag: v80.9.0
 source: https://github.com/pypa/setuptools
 requires:
  - Python
+prepend_path:
+  PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---
-if ! rsync -a --chmod=ug=rwX --delete --exclude '**/.git' \
-      --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/; then
-    exit 1
-fi
+rsync -a --chmod=ug=rwX --delete --exclude '**/.git' \
+      --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
 
-which python3
 python3 setup.py build
 python3 setup.py egg_info
 

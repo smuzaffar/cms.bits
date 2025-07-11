@@ -7,7 +7,6 @@ prepend_path:
   "PATH": "$GCC_TOOLCHAIN_ROOT/libexec/bin"
 build_requires:
   - "autotools:(slc6|slc7)"
-  - yacc-like
   - make
 prefer_system: .*
 prefer_system_check: |

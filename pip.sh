@@ -1,21 +1,26 @@
 package: pip
 version: "%(tag_basename)s"
 tag: 25.1.1
-source: https://github.com/pypa/get-pip
+sources:
+- https://raw.githubusercontent.com/pypa/get-pip/refs/tags/%(version)s/public/get-pip.py
 requires:
  - Python
  - setuptools
+prepend_path:
+  PYTHON3PATH: "%(root_dir)s/${PYTHON3_LIB_SITE_PACKAGES}"
 ---
-if ! rsync -a --chmod=ug=rwX --delete --exclude '**/.git' \
-      --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/; then
-    exit 1
-fi
-
-echo "The python is from"
-which python3
-curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-python3 get-pip.py \
+python3 $SOURCEDIR/get-pip.py \
   --no-setuptools \
   --no-wheel \
-  --prefix "$INSTALLROOT"
+  pip==${PKGVERSION} \
+  --prefix="$INSTALLROOT"
+
+for py in $(grep -RlI -m1 '^#\!.*python' ${INSTALLROOT}/${PYTHON3_LIB_SITE_PACKAGES} | grep -v '\.pyc$') ; do
+  lnum=$(grep -n -m1 '^#\!.*python' $py | sed 's|:.*||')
+  sed -i -e "${lnum}c#!/usr/bin/env python3" $py
+done
+
+rm -f ${INSTALLROOT}/bin/pip
+perl -p -i -e "s|^#!.*python.*|#!/usr/bin/env python3|" ${INSTALLROOT}/bin/pip3*
+perl -p -i -e "s| ${WORK_DIR}/.*/python3 | python3 |" ${INSTALLROOT}/bin/pip3*
 
