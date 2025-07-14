@@ -4,7 +4,6 @@ tag: curl-7_79_0
 source: https://github.com/curl/curl.git
 build_requires:
   - "OpenSSL:(?!osx)"
-  - alibuild-recipe-tools
 requires:
   - zlib
 ---
@@ -38,11 +37,6 @@ make -j"$MAKEPROCESSES"
 
 make install
 
-
-# Modulefile
-mkdir -p etc/modulefiles
-alibuild-generate-module --bin --lib > etc/modulefiles/$PKGNAME
-mkdir -p $INSTALLROOT/etc/modulefiles && rsync -a --delete etc/modulefiles/ $INSTALLROOT/etc/modulefiles
 
 if [[ "$OS_TYPE" == "darwin" ]]; then
     echo "Applying macOS-specific post-install steps..."

@@ -10,7 +10,6 @@ build_requires:
   - curl
   - "autotools:(slc6|slc7)"
   - "GCC-Toolchain:(?!osx)"
-  - alibuild-recipe-tools
 ---
 #!/bin/bash -ex
 rsync -av $SOURCEDIR/ ./
@@ -20,9 +19,3 @@ make ${JOBS:+-j $JOBS}
 make install
 rm -f $INSTALLROOT/lib/*.la
 rm -rf $INSTALLROOT/share
-
-# Modulefile
-MODULEDIR="$INSTALLROOT/etc/modulefiles"
-MODULEFILE="$MODULEDIR/$PKGNAME"
-mkdir -p "$MODULEDIR"
-alibuild-generate-module --lib --bin > "$MODULEFILE"

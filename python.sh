@@ -2,8 +2,6 @@ package: Python
 version: "%(tag_basename)s"
 tag: v3.9.14
 source: https://github.com/python/cpython
-build_requires:
- - alibuild-recipe-tools
 requires:
  - expat
  - bz2lib
@@ -30,12 +28,8 @@ if ! mkdir -p "${INSTALLROOT}"/{include,lib,bin}; then
     exit 1
 fi
 
-export DB6_ROOT
-export LIBFFI_ROOT
-echo $LIBFFI_ROOT
 LDFLAGS=""
 CPPFLAGS=""
-
 for d in ${EXPAT_ROOT} ${BZ2LIB_ROOT} ${DB6_ROOT} ${GDBM_ROOT} ${LIBFFI_ROOT} ${ZLIB_ROOT} ${SQLITE_ROOT} ${XZ_ROOT} ; do
     if [[ -n "$d" ]]; then
         if [[ -e "$d/lib" ]]; then

@@ -1,8 +1,6 @@
 package: xz
 version: "%(tag_basename)s"
 tag: v5.2.5
-build_requires:
-  - alibuild-recipe-tools
 requires:
  - "GCC-Toolchain:(?!osx)"
 source: https://github.com/tukaani-project/xz
@@ -24,11 +22,4 @@ rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded \
     --disable-doc
 
 make ${MAKEPROCESSES}
-
-make -j"$(nproc)" install
-
-if [ -x "$INSTALLROOT/bin/xz" ]; then
-  :
-else
-  exit 1
-fi
+make ${MAKEPROCESSES} install

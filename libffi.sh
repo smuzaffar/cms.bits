@@ -1,8 +1,6 @@
 package: libffi
 version: "%(tag_basename)s"
 tag: v3.4.2
-build_requires:
- - alibuild-recipe-tools
 requires:
  - "GCC-Toolchain:(?!osx)"
 source: https://github.com/libffi/libffi

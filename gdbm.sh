@@ -1,8 +1,6 @@
 package: gdbm
 version: "%(tag_basename)s"
 tag: v1.10
-build_requires:
- - alibuild-recipe-tools
 requires:
  - "GCC-Toolchain:(?!osx)"
 source: https://github.com/akritkbehera/gdbm
@@ -40,7 +38,6 @@ for CONFIG_SUB_FILE in $(find "$BUILDDIR" -name 'config.sub' -not -path "*/tmp/*
 done
 
 
-echo "→ rsync -a --chmod=ug=rwX --delete --exclude '**/.git' $SOURCEDIR/ $BUILDDIR/"
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 
 cd "$BUILDDIR"
@@ -51,6 +48,4 @@ cd "$BUILDDIR"
   --disable-nls \
   --disable-rpath
 
-: "${MAKEPROCESSES:=-j$(nproc)}"
-echo "→ make $MAKEPROCESSES"
 make $MAKEPROCESSES

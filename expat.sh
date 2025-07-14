@@ -1,8 +1,6 @@
 package: expat
 version: "%(tag_basename)s"
 tag: R_2_4_8
-build_requires:
- - alibuild-recipe-tools
 requires:
  - "GCC-Toolchain:(?!osx)"
 source: https://github.com/libexpat/libexpat

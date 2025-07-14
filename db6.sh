@@ -1,8 +1,6 @@
 package: db6
 version: "%(tag_basename)s"
 tag: 6.2.32
-build_requires:
- - alibuild-recipe-tools
 requires:
  - "GCC-Toolchain:(?!osx)"
 sources:
