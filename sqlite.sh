@@ -2,8 +2,6 @@ package: sqlite
 version: "%(tag_basename)s"
 tag: version-3.36.0
 source: https://github.com/sqlite/sqlite
-build_requires:
- - alibuild-recipe-tools
 requires:
  - zlib
  - gcc

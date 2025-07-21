@@ -1,8 +1,6 @@
 package: bz2lib
 version: "%(tag_basename)s"
 tag: bzip2-1.0.6
-build_requires:
- - alibuild-recipe-tools
 requires:
  - gcc
 source: https://github.com/libarchive/bzip2
