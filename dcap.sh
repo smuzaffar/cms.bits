@@ -9,7 +9,13 @@ requires:
 ---
 set -e
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
-perl -p -i -e 's|library_includedir.*|library_includedir\=\$(includedir)|' src/Makefile.am
+if [ -f src/Makefile.am ]; then
+    perl -p -i.bak -e 's|^library_includedir.*|library_includedir=\$(includedir)|' src/Makefile.am
+    echo "Patched src/Makefile.am"
+    diff src/Makefile.am.bak src/Makefile.am || true
+else
+    echo "Warning: src/Makefile.am not found"
+fi
 mkdir -p config
 aclocal -I config
 autoheader
