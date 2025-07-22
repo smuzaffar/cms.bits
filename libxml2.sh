@@ -18,4 +18,4 @@ rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 make ${JOBS:+-j$JOBS}
 make install
 rm -rf ${INSTALLROOT}/lib/pkgconfig
-rm -rf ${INSTALLROOT}/lib/*.{l,}a
+rm -rf ${INSTALLROOT}/lib/*.{l,}a   
