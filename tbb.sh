@@ -3,9 +3,8 @@ version: "%(tag_basename)s"
 tag: v2022.0.0
 source: https://github.com/uxlfoundation/oneTBB
 requires:
-  - "GCC-Toolchain:(?!osx)"
+  - gcc
   - CMake
-  - alibuild-recipe-tools
   - hwloc
 ---
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/

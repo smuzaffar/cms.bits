@@ -15,8 +15,8 @@ requires:
   - gcc
 build_requires:
   - CMake
-  - UUID
-  - alibuild-recipe-tools
+  - gmake
+  - pip
 ---
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 SOEXT="so"
