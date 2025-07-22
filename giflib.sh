@@ -7,7 +7,7 @@ requires:
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
-    -C "$BUILDDIR" pcre2
+    -C "$BUILDDIR" 
 
 echo "all:" > doc/Makefile
 make all ${JOBS:+-j$JOBS} LIBVER=$PKGVERSION LIBMAJOR=5 PREFIX=$INSTALLROOT

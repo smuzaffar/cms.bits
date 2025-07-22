@@ -26,3 +26,4 @@ requires:
   - FreeType
   - zstd
 ---
+exit 0

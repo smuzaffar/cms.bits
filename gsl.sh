@@ -6,6 +6,8 @@ requires:
   - gcc
   - OpenBLAS
 ---
+rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
+
 CONFIG_BASE_URL="http://cmsrep.cern.ch/cmssw/download/config"
 CONFIG_GUESS_URL="${CONFIG_BASE_URL}/config.guess"
 CONFIG_SUB_URL="${CONFIG_BASE_URL}/config.sub"
@@ -38,8 +40,6 @@ for CONFIG_SUB_FILE in $(find "$BUILDDIR" -name 'config.sub' -not -path "*/tmp/*
     chmod +x "$CONFIG_SUB_FILE" || { echo "❌ Failed to chmod $CONFIG_SUB_FILE"; exit 1; }
 done
 
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
-
 CFLAGS="-O2" ./configure --prefix=${INSTALLROOT} --with-pic
 
 make ${JOBS:+-j$JOBS} 
@@ -48,3 +48,4 @@ make install
 rm -rf ${INSTALLROOT}/lib/pkgconfig
 rm -fv $INSTALLROOT/lib/*.la
 mkdir ${INSTALLROOT}/cblas
+mv ${INSTALLROOT}/lib/libgslcblas* ${INSTALLROOT}/cblas/

@@ -1,14 +1,15 @@
 package: libpciaccess
 version: "%(tag_basename)s"
-tag: libpciaccess-0.16
-source: https://gitlab.freedesktop.org/xorg/lib/libpciaccess
+tag: libpciaccess_0.16
+sources: 
+- http://deb.debian.org/debian/pool/main/libp/libpciaccess/%(tag_basename)s.orig.tar.gz
 requires:
  - zlib
  - gcc
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
-
-./autogen.sh
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR"
 
 ./configure \
   --prefix ${INSTALLROOT} \
