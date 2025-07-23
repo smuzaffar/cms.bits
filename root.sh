@@ -1,6 +1,6 @@
 package: ROOT
 version: "v1"
-tag: cms/v6-32-00-patches/69384a6a78
+tag: cms/v6-36-00-patches/1715228c2c
 source: https://github.com/cms-sw/root
 build_requires:
 - CMake
@@ -74,11 +74,11 @@ ARCH=$(uname -m)
 
 # Build CMake command
 cmake_args=(
-  "../$PKGNAME-$PKGVERSION"
+  "../$PKGNAME/$PKGNAME-$PKGVERSION"
   -G Ninja
   -DCMAKE_BUILD_TYPE="${cmake_build_type}"
   -DLLVM_BUILD_TYPE="${LLVM_BUILD_TYPE}"
-  -DCMAKE_INSTALL_PREFIX="${i}"
+  -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
   -DCMAKE_C_COMPILER=gcc
   -DCMAKE_CXX_COMPILER=g++
   -DCMAKE_Fortran_COMPILER=gfortran
@@ -92,7 +92,7 @@ cmake_args=(
   -Dhdfs=OFF
   -Dqt=OFF
   -Dtmva=ON
-  -DPython3_EXECUTABLE="${PYTHON3_ROOT}/bin/python3"
+  -DPython3_EXECUTABLE="${PYTHON_ROOT}/bin/python3.9"
   -Dqtgsi=OFF
   -Dpgsql=OFF
   -Dsqlite=OFF
@@ -117,14 +117,13 @@ cmake_args=(
   -Dbuiltin_glew=ON
   -Dbuiltin_ftgl=ON
   -Dbuiltin_gl2ps=ON
-  -Dbuiltin_afterimage=ON
   -Dbuiltin_xxhash=ON
   -Dbuiltin_nlohmannjson=ON
   -Darrow=OFF
   -DGSL_ROOT_DIR="${GSL_ROOT}"
   -DGSL_CBLAS_LIBRARY="${OPENBLAS_ROOT}/lib/libopenblas.${soext}"
   -DGSL_CBLAS_LIBRARY_DEBUG="${OPENBLAS_ROOT}/lib/libopenblas.${soext}"
-  -DCMAKE_CXX_STANDARD="${cms_cxx_standard}"
+  -DCMAKE_CXX_STANDARD=20
   -Dssl=ON
   -Dpyroot=ON
   -Dxrootd=ON
@@ -175,7 +174,6 @@ if [ "$OS" = "linux" ]; then
   )
 elif [ "$OS" = "darwin" ]; then
   cmake_args+=(
-    -Dbuiltin_afterimage=OFF
     -Dcocoa=OFF
     -Dx11=ON
     -Dcastor=OFF
