@@ -5,4 +5,6 @@ requires:
   - "cuda-x86_64:.*x86.*"
   -  Python
   -  gcc
+env:
+ CUDA_ROOT: "$CUDAROOT"
 ---

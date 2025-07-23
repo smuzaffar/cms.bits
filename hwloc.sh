@@ -33,7 +33,7 @@ sh autogen.sh
   HWLOC_NUMA_LIBS="-L$NUMACTL_ROOT/lib -lnuma"
 
 make ${JOBS:+-j$JOBS}
-make install DESTDIR=$INSTALLROOT
+make install
 
 # remove the libtool library files
 rm -f  $INSTALLROOT/lib/lib*.la

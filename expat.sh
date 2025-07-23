@@ -41,5 +41,5 @@ cd "$PKGNAME"
 ./configure --prefix="$INSTALLROOT"
 make ${JOBS+-j $JOBS}
 
-make install DESTDIR="$INSTALLROOT"
+make install
 

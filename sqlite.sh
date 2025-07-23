@@ -52,8 +52,9 @@ cd "$BUILDDIR"
   --build="$CMS_BITS_MARCH" \
   --prefix="${INSTALLROOT}" \
   --disable-static \
-  --disable-dependency-tracking
+  --disable-dependency-tracking \
+  --disable-tcl
 
 make ${JOBS+-j $JOBS}
-make install DESTDIR="${INSTALLROOT}"
-rm -rf "${INSTALLROOT}/lib/pkgconfig"
+make install
+rm -rf $INSTALLROOT/lib/pkgconfig

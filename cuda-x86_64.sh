@@ -4,6 +4,8 @@ variables:
   driversversion: 575.51.03
 sources:
  - https://developer.download.nvidia.com/compute/cuda/%(version)s/local_installers/cuda_%(version)s_%(driversversion)s_linux.run
+env:
+  CUDAROOT: "$CUDA_X86_64_ROOT"
 ---
 echo "%(driversversion)s"
 CUDADRIVER_VERSION="%(driversversion)s"

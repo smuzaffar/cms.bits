@@ -50,4 +50,4 @@ cd $BUILDDIR/gdbm-*
   --disable-rpath
 
 make ${JOBS+-j $JOBS}
-make install DESTDIR="$INSTALLROOT"
+make install

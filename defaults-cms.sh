@@ -1,4 +1,4 @@
-package: defaults-o2
+package: defaults-cms
 version: v1
 env:
   CFLAGS: -fPIC -O2
@@ -9,8 +9,8 @@ env:
   GEANT4_BUILD_MULTITHREADED: 'OFF'
   MACOSX_DEPLOYMENT_TARGET: '14.0'
 disable:
-  - mesos
-  - MySQL
+  - rocm
+  - cuda
 overrides:
   AliPhysics:
     version: '%(commit_hash)s_O2'
