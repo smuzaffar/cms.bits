@@ -1,0 +1,13 @@
+diff --git a/src/google/protobuf/map_field.h b/src/google/protobuf/map_field.h
+index 287d58f..c243e4a 100644
+--- a/src/google/protobuf/map_field.h
++++ b/src/google/protobuf/map_field.h
+@@ -306,7 +306,7 @@ class PROTOBUF_EXPORT MapFieldBase : public MapFieldBaseForParse {
+
+  protected:
+   // "protected" stops users from deleting a `MapFieldBase *`
+-  ~MapFieldBase();
++  virtual ~MapFieldBase();
+
+   struct VTable : MapFieldBaseForParse::VTable {
+     bool (*lookup_map_value)(const MapFieldBase& map, const MapKey& map_key, 
