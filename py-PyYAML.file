@@ -1,0 +1,4 @@
+package: py-PyYAML
+sources: 
+- https://pypi.io/packages/source/p/pyyaml/pyyaml-6.0.2.tar.gz
+---

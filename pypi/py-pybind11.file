@@ -1,0 +1,14 @@
+package: py-pybind11
+patches:
+- pybind11-array-bound.patch
+---
+echo $PATCH0
+cp "$SOURCEDIR/$PATCH0" "$BUILDDIR/"
+
+tar -xzf "$SOURCEDIR/${SOURCE0}" \
+    --strip-components=1 \
+    -C "$BUILDDIR" 
+
+patch -p1 < $PATCH0
+PipPostInstall="  ln -s ${PYTHON_LIB_SITE_PACKAGES}/pybind11/share $INSTALLROOT/share; \
+  ln -s ${PYTHON_LIB_SITE_PACKAGES}/pybind11/include $INSTALLROOT/include" 
