@@ -11,7 +11,6 @@ requires:
  - gdrcopy
  - gcc
 ---
-export without_rocm="yes"
 
 rsync -a --chmod=ug=rwX --delete --exclude '**/.git' "$SOURCEDIR"/ "$BUILDDIR"/
 

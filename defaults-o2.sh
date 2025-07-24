@@ -8,6 +8,9 @@ env:
   ENABLE_VMC: 'ON'
   GEANT4_BUILD_MULTITHREADED: 'OFF'
   MACOSX_DEPLOYMENT_TARGET: '14.0'
+  LLVM_BUILD_TYPE: "Release"
+  without_rocm: "yes"
+  without_cuda: ""
 disable:
   - mesos
   - MySQL

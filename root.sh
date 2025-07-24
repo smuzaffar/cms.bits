@@ -27,6 +27,7 @@ requires:
 - FreeType
 - zstd
 - dcap
+- cuda
 ---
 case "$(uname)" in
 Darwin)
@@ -59,13 +60,6 @@ fi
 if [ -n "${arch_build_flags:-}" ]; then
   export CFLAGS="${CFLAGS} ${arch_build_flags}"
   export CXXFLAGS="${CXXFLAGS} ${arch_build_flags}"
-fi
-
-# Set LLVM build type based on debug flag
-if [ "${is_debug_build_root_llvm:-}" = "true" ]; then
-  LLVM_BUILD_TYPE="Debug"
-else
-  LLVM_BUILD_TYPE="Release"
 fi
 
 # Set OS-specific flags
