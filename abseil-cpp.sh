@@ -1,5 +1,5 @@
 package: abseil-cpp
-version: "v20220623.1"
+version: "%(tag_basename)s"
 tag: "20220623.1"
 source: https://github.com/abseil/abseil-cpp
 requires:

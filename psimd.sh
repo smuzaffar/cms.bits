@@ -6,6 +6,8 @@ sources:
 build_requires:
 - gmake
 - CMake
+requires:
+- gcc
 ---
 tar -xzf "$SOURCEDIR/${SOURCE0}" \
     --strip-components=1 \
