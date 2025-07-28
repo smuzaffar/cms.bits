@@ -1,3 +1,4 @@
+package: py-cffi
 requires:
  - libffi
  - py-pycparser

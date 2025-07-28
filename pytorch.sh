@@ -1,8 +1,8 @@
 package: pytorch
-version: "%(tag_basename)s"
-tag: "v2.6.0"
+version: "v%(tag_basename)s"
+tag: "2.6.0"
 sources: 
-- https://github.com/pytorch/pytorch/archive/%(tag_basename)s.tar.gz
+- git+https://github.com/pytorch/pytorch?obj=main/v2.6.0&export=pytorch-2.6.0&submodules=1&output=/pytorch-2.6.0.tgz
 - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_15_1_X/g14/FindEigen3.cmake.file
 - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_15_1_X/g14/FindFMT.cmake.file
 - https://raw.githubusercontent.com/cms-sw/cmsdist/refs/heads/IB/CMSSW_15_1_X/g14/scram-tools.file/tools/eigen/env.sh
@@ -13,6 +13,8 @@ build_requires:
 - CMake 
 - ninja
 requires:
+- cuda
+- cudnn
 - gcc
 - eigen
 - fxdiv
@@ -29,27 +31,23 @@ requires:
 - py-typing-extensions
 ---
 mkdir -p $BUILDDIR/$PKGNAME-$PKGVERSION/
-cd $BUILDDIR/$PKGNAME-$PKGVERSION/
+pushd $BUILDDIR/$PKGNAME-$PKGVERSION/
 
-tar -xzf "$SOURCEDIR"/*.tar.gz \
+tar -xzf "$SOURCEDIR"/$SOURCE0 \
     --strip-components=1 \
     -C "$BUILDDIR/$PKGNAME-$PKGVERSION"
 
-pushd "$SOURCEDIR" > /dev/null
-
-mv FindEigen3.cmake.file FindEigen3.cmake
-mv FindFMT.cmake.file FindFMT.cmake
-
-popd > /dev/null
-
-cp "$SOURCEDIR"/Find*.cmake "$BUILDDIR/$PKGNAME-$PKGVERSION"/cmake/Modules/
-cp "$SOURCEDIR"/env* "$BUILDDIR/$PKGNAME-$PKGVERSION"/
+cp "$SOURCEDIR/FindEigen3.cmake.file" "$BUILDDIR/$PKGNAME-$PKGVERSION/cmake/Modules/FindEigen3.cmake"
+#cp "$SOURCEDIR/FindFMT.cmake.file" "$BUILDDIR/$PKGNAME-$PKGVERSION/cmake/Modules/FindFMT.cmake"
+cp "$SOURCEDIR"/env.sh "$BUILDDIR/$PKGNAME-$PKGVERSION"/
 
 patch -p1 < $SOURCEDIR/$PATCH0
 patch -p1 < $SOURCEDIR/$PATCH1
+popd
+
+rm -rf build; mkdir build; cd build
 
 #source env.sh
-
 USE_CUDA=OFF
 
 if [ -z "${WITHOUT_CUDA}" ]; then
@@ -58,7 +56,6 @@ if [ -z "${WITHOUT_CUDA}" ]; then
   fi
 fi
 
-cd $BUILDDIR
 cmake_args=(
   $BUILDDIR/$PKGNAME-$PKGVERSION
   -G Ninja
@@ -67,7 +64,8 @@ cmake_args=(
   -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"
   -DCMAKE_INSTALL_LIBDIR=lib
   -DBUILD_TEST=OFF
-  -DBUILD_PYTHON=ON
+  -DBUILD_BINARY=OFF
+  -DBUILD_PYTHON=OFF
   -DUSE_CUSPARSELT=OFF
   -DUSE_CUDSS=OFF
   -DUSE_NCCL=OFF
@@ -83,6 +81,7 @@ cmake_args=(
   -DUSE_NUMPY=OFF
   -DUSE_OPENMP=ON
   -DUSE_QNNPACK=OFF
+  -DUSE_PYTORCH_QNNPACK=OFF
   -DUSE_VALGRIND=OFF
   -DUSE_XNNPACK=OFF
   -DUSE_MKLDNN=OFF
@@ -98,8 +97,9 @@ cmake_args=(
   -DUSE_SYSTEM_FXDIV=ON
   -DUSE_SYSTEM_PYBIND11=ON
   -DUSE_SYSTEM_BENCHMARK=OFF
-  -DPython3_EXECUTABLE="$PYTHON_ROOT/bin/python3.9"
+  -DPYTHON_EXECUTABLE=${PYTHON_ROOT}/bin/python3
   -DCMAKE_PREFIX_PATH="${EIGEN_ROOT};${FXDIV_ROOT};${NUMACTL_ROOT};${OPENMPI_ROOT};${PROTOBUF_ROOT};${PSIMD_ROOT};${PYTHON_ROOT};${PY_PYYAML_ROOT};${OPENBLAS_ROOT};${ZLIB_ROOT};${FMT_ROOT};${PY_PYBIND11_ROOT};${PY_TYPING_EXTENSIONS_ROOT}"
+  -DCMAKE_FIND_DEBUG_MODE=ON
 )
 
 if [ -z "${WITHOUT_CUDA}" ]; then

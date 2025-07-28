@@ -1,6 +1,6 @@
 package: CMake
 version: "%(tag_basename)s"
-tag: "v3.28.3"
+tag: "v3.31.7"
 source: https://github.com/Kitware/CMake
 requires:
   - gcc

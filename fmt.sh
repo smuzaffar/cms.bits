@@ -5,8 +5,12 @@ source: https://github.com/fmtlib/fmt/
 build_requires:
 - CMake
 - gmake
+requires:
+- gcc
 ---
-rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR"/
+#mkdir -p $BUILDDIR/src
+#rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded "$SOURCEDIR"/ "$BUILDDIR/src"
+
 if [ -z "${arch_build_flags:-}" ]; then
   case "$(uname -m)" in
   ppc64le) arch_build_flags="-mcpu=power8 -mtune=power8 --param=l1-cache-size=64 --param=l1-cache-line-size=128 --param=l2-cache-size=512" ;;
@@ -26,7 +30,6 @@ if [[ -n "${arch_build_flags}" ]]; then
   CMAKE_ARGS+=("-DCMAKE_CXX_FLAGS=${arch_build_flags}")
 fi
 
-cmake "${CMAKE_ARGS[@]}" .
-
+cmake "${CMAKE_ARGS[@]}" "$SOURCEDIR" 
 make ${JOBS:+-j$JOBS}
 make install
