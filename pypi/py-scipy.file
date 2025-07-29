@@ -1,0 +1,35 @@
+requires:
+- py-numpy
+- py-cython
+- py-pybind11
+- py-pythran
+- py-meson-python
+- OpenBLAS
+build_requires:
+- CMake 
+---
+PipPreBuild='
+export NPY_NUM_BUILD_JOBS=${JOBS+-j $JOBS} ;\
+export FFLAGS="${FFLAGS_OPT} -fallow-argument-mismatch -fPIC"
+'
+
+if [[ "$(uname -m)" == "aarch64" ]]; then
+  echo "python${PYTHON3_VERSION}dist(scipy) = ${PKG_VERSION}" >> "$INSTALLROOT/.provides"
+  echo "python3dist(scipy) = ${PKG_VERSION}" >> "$INSTALLROOT/.provides"
+  export __find_provides=true
+fi
+
+
+PipPostPost='
+%{relocateConfig}lib/python*/site-packages/scipy/__config__.py
+%{relocateConfig}lib/python*/site-packages/scipy/special/*.pyx
+'
+
+
++ echo /build/akb/BUILD/tmp/BUILDROOT/1c89ff6b667c82969981f34f79614cd8/opt/cmssw
+/build/akb/BUILD/tmp/BUILDROOT/1c89ff6b667c82969981f34f79614cd8/opt/cmssw
+WORK_DIR
++ echo /build/akb/BUILD
+/build/akb/BUILD
++ echo el8_amd64_gcc12/external/xgboost/1.7.5-1c89ff6b667c82969981f34f79614cd8
+el8_amd64_gcc12/external/xgboost/1.7.5-1c89ff6b667c82969981f34f79614cd8

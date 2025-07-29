@@ -6,11 +6,9 @@ requires:
  - zlib
  - OpenBLAS
 sources:
- - https://github.com/numpy/numpy/releases/download/v1.26.4/numpy-1.26.4.tar.gz
+ - https://github.com/numpy/numpy/releases/download/v%(version)s/numpy-%(version)s.tar.gz
  ---
-tar -xzf "$SOURCEDIR"/*.tar.gz -C "$BUILDDIR"
-cd $BUILDDIR/numpy-*
-PipInstallOptions="$PWD"
+PipInstallOptions="$PWD/numpy-*"
 
 PipPatchSource="cat > site.cfg <<EOF
 [default]
