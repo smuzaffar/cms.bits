@@ -1,0 +1,4 @@
+name: py-packaging
+requires:
+ - py-flit-core
+---
