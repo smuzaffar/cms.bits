@@ -13,8 +13,39 @@ function chkDefined(){
   if ! isDefined $1 ; then eval "$1=\"$2\"" ; fi
 }
 
+function unPackSource(){
+  case ${SOURCE0} in
+   *.tar.gz|*.tgz) tar -xzf ${SOURCEDIR}/${SOURCE0} ;;
+   *.whl) wheel unpack ${SOURCEDIR}/${SOURCE0} ;;
+   *)
+     echo "ERROR: Unknown file type, please update here to support unpacking of this type of file"
+     exit 1
+     ;;
+  esac
+}
+
+
+function packSource(){
+  case ${SOURCE0} in
+   *.tar.gz|*.tgz) ;;
+   *.whl)
+     rm -rf bits-pack-${PKGNAME}
+     mkdir bits-pack-${PKGNAME}
+     wheel pack --dest-dir bits-pack-${PKGNAME} $PYPI_SRC
+     mv bits-pack-${PKGNAME}/*.whl "${BUILDDIR}"/${SOURCE0}
+     rm -rf bits-pack-${PKGNAME} $PYPI_SRC
+     PYPI_SRC="${BUILDDIR}"/${SOURCE0}
+     ;;
+   *)
+     echo "ERROR: Unknown file type, please update here to support packing of this type of file"
+     exit 1
+     ;;
+  esac
+}
+
 [ "${Pypi_name}" != "" ] || Pypi_name=$(echo ${PKGNAME} | cut -f2-10 -d-)
-chkDefined PipUnpackCommand "tar -xzf ${SOURCEDIR}/${SOURCE0}"
+chkDefined PipUnpackCommand "unPackSource"
+chkDefined PipPackCommand "packSource"
 chkDefined PipPackageNameCommand "pip3 show ${Pypi_name} --disable-pip-version-check | grep '^Name:' | sed 's|^Name: *||;s| ||g'"
 chkDefined PipDepsPost "xargs --no-run-if-empty echo"
 chkDefined PipDepsMatch "grep \\\"^\\\${PKG_NAME}  *${PKGVERSION}  *requires \\\" | sed 's|,.*||;s|.* |py-|'"
@@ -22,15 +53,15 @@ chkDefined PipDepsCommand "pip3 check --disable-pip-version-check"
 chkDefined PipInstallCommand "pip3 install --no-clean --no-deps --no-index --no-build-isolation --no-cache-dir --disable-pip-version-check --user -v ${PipInstallOptions} ${PipBuildOptions} \\\${PYPI_SRC}"
 
 runIt PipPrePrep
-rm -rf cmsdist-patch-${PKGNAME}
-mkdir cmsdist-patch-${PKGNAME}
-pushd cmsdist-patch-${PKGNAME}
+rm -rf bits-patch-${PKGNAME}
+mkdir bits-patch-${PKGNAME}
+pushd bits-patch-${PKGNAME}
   runIt PipUnpackCommand
   pip_package_dirname=$(ls -d *)
   PYPI_SRC="${BUILDDIR}"/${pip_package_dirname}
   mv ${pip_package_dirname} "${PYPI_SRC}"
 popd
-rm -rf cmsdist-patch-${PKGNAME}
+rm -rf bits-patch-${PKGNAME}
 
 pushd $PYPI_SRC
   if [ "${PATCH_COUNT}" -gt 0 ] ; then
@@ -42,9 +73,11 @@ pushd $PYPI_SRC
   fi
   runIt PipPatchSource
 popd
+runIt PipPackCommand
+
 runIt PipPostPrep
 
-runIt PipPostBuild
+runIt PipPreBuild
 export PYTHONUSERBASE="$INSTALLROOT"
 export TMPDIR="$BUILDDIR/bits-tmp"
 mkdir -p $TMPDIR
